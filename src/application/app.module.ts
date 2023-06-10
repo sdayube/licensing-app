@@ -12,6 +12,8 @@ import { LicenseModule } from './license/license.module';
 import { RobotModule } from './robot/robot.module';
 import { RobotTypeModule } from './robot-type/robot-type.module';
 import { BankModule } from './bank/bank.module';
+import { TaskModule } from './task/task.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -21,6 +23,7 @@ import { BankModule } from './bank/bank.module';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1h' },
     }),
+    ScheduleModule.forRoot(),
     PrismaModule,
     AuthModule,
     ClientModule,
@@ -29,6 +32,7 @@ import { BankModule } from './bank/bank.module';
     RobotModule,
     RobotTypeModule,
     BankModule,
+    TaskModule,
   ],
   providers: [
     {

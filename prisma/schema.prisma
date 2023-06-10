@@ -54,6 +54,7 @@ model License {
   deletedAt      DateTime?  @map("deleted_at")
   client         Client     @relation(fields: [clientId], references: [id])
   robotType      RobotType? @relation(fields: [robotTypeId], references: [id])
+  tasks          Task[]
 
   @@map("licenses")
 }
@@ -81,6 +82,7 @@ model Robot {
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
   robotType RobotType @relation(fields: [type], references: [id])
+  tasks     Task[]
 
   @@map("robots")
 }
@@ -96,4 +98,19 @@ model Bank {
   robotTypes   RobotType[]
 
   @@map("banks")
+}
+
+model Task {
+  id         String   @id @default(uuid())
+  licenseId  String   @map("license_id")
+  robotId    String   @map("robot_id")
+  status     String   @default("pending")
+  parameters Json
+  result     Json?
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  license    License  @relation(fields: [licenseId], references: [id])
+  robot      Robot    @relation(fields: [robotId], references: [id])
+
+  @@map("tasks")
 }

@@ -7,10 +7,10 @@ import { UpdateRobotDto } from './dto/update-robot.dto';
 
 @Injectable()
 export class RobotService {
-  constructor(private readonly licenseRepository: RobotRepository) {}
+  constructor(private readonly robotRepository: RobotRepository) {}
 
   async findAll({ searchTerm, skip, take }: GetListDto): Promise<Robot[]> {
-    return this.licenseRepository.findMany(
+    return this.robotRepository.findMany(
       {
         title: { contains: searchTerm, mode: 'insensitive' },
       },
@@ -19,13 +19,13 @@ export class RobotService {
   }
 
   async count(searchTerm: string): Promise<number> {
-    return this.licenseRepository.count({
+    return this.robotRepository.count({
       title: { contains: searchTerm, mode: 'insensitive' },
     });
   }
 
   async findById(id: string): Promise<Robot> {
-    const license = await this.licenseRepository.findOne({ id });
+    const license = await this.robotRepository.findOne({ id });
 
     if (!license) {
       throw new NotFoundException();
@@ -35,14 +35,14 @@ export class RobotService {
   }
 
   async create(createRobotDto: CreateRobotDto): Promise<Robot> {
-    return this.licenseRepository.create(createRobotDto);
+    return this.robotRepository.create(createRobotDto);
   }
 
   async update(id: string, updateRobotDto: UpdateRobotDto): Promise<Robot> {
-    return this.licenseRepository.update(id, updateRobotDto);
+    return this.robotRepository.update(id, updateRobotDto);
   }
 
   async delete(id: string): Promise<Robot> {
-    return this.licenseRepository.delete(id);
+    return this.robotRepository.delete(id);
   }
 }

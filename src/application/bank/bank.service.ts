@@ -7,10 +7,10 @@ import { UpdateBankDto } from './dto/update-bank.dto';
 
 @Injectable()
 export class BankService {
-  constructor(private readonly licenseRepository: BankRepository) {}
+  constructor(private readonly bankRepository: BankRepository) {}
 
   async findAll({ searchTerm, skip, take }: GetListDto): Promise<Bank[]> {
-    return this.licenseRepository.findMany(
+    return this.bankRepository.findMany(
       {
         name: { contains: searchTerm, mode: 'insensitive' },
       },
@@ -19,13 +19,13 @@ export class BankService {
   }
 
   async count(searchTerm: string): Promise<number> {
-    return this.licenseRepository.count({
+    return this.bankRepository.count({
       name: { contains: searchTerm, mode: 'insensitive' },
     });
   }
 
   async findById(id: string): Promise<Bank> {
-    const license = await this.licenseRepository.findOne({ id });
+    const license = await this.bankRepository.findOne({ id });
 
     if (!license) {
       throw new NotFoundException();
@@ -35,14 +35,14 @@ export class BankService {
   }
 
   async create(createBankDto: CreateBankDto): Promise<Bank> {
-    return this.licenseRepository.create(createBankDto);
+    return this.bankRepository.create(createBankDto);
   }
 
   async update(id: string, updateBankDto: UpdateBankDto): Promise<Bank> {
-    return this.licenseRepository.update(id, updateBankDto);
+    return this.bankRepository.update(id, updateBankDto);
   }
 
   async delete(id: string): Promise<Bank> {
-    return this.licenseRepository.delete(id);
+    return this.bankRepository.delete(id);
   }
 }

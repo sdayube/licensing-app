@@ -8,8 +8,21 @@ import { UpdateClientDto } from 'src/application/client/dto/update-client.dto';
 export class ClientRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findMany(filter: Prisma.ClientWhereInput = {}): Promise<Client[]> {
+  async findMany(
+    filter: Prisma.ClientWhereInput = {},
+    pagination?: { skip?: number; take?: number },
+  ): Promise<Client[]> {
     return this.prisma.client.findMany({
+      where: {
+        ...filter,
+        deletedAt: null,
+      },
+      ...pagination,
+    });
+  }
+
+  async count(filter: Prisma.ClientWhereInput = {}): Promise<number> {
+    return this.prisma.client.count({
       where: {
         ...filter,
         deletedAt: null,

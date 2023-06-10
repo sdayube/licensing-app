@@ -7,13 +7,35 @@ import {
 import { Client } from '@prisma/client';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { GetListDto } from '@core/common/dto/get-list.dto';
 
 @Injectable()
 export class ClientService {
   constructor(private readonly clientRepository: ClientRepository) {}
 
-  async findAll(): Promise<Client[]> {
-    return this.clientRepository.findMany();
+  async findAll({ searchTerm, skip, take }: GetListDto): Promise<Client[]> {
+    return this.clientRepository.findMany(
+      {
+        OR: [
+          { name: { contains: searchTerm, mode: 'insensitive' } },
+          { email: { contains: searchTerm, mode: 'insensitive' } },
+          { cpf: { contains: searchTerm, mode: 'insensitive' } },
+          { cnpj: { contains: searchTerm, mode: 'insensitive' } },
+        ],
+      },
+      { skip, take },
+    );
+  }
+
+  async count(searchTerm: string): Promise<number> {
+    return this.clientRepository.count({
+      OR: [
+        { name: { contains: searchTerm, mode: 'insensitive' } },
+        { email: { contains: searchTerm, mode: 'insensitive' } },
+        { cpf: { contains: searchTerm, mode: 'insensitive' } },
+        { cnpj: { contains: searchTerm, mode: 'insensitive' } },
+      ],
+    });
   }
 
   async findById(id: string): Promise<Client> {

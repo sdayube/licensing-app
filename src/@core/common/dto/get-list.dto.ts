@@ -1,6 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsBooleanString,
   IsNotEmpty,
   IsNumberString,
   IsOptional,
@@ -16,12 +15,7 @@ export class GetListDto {
   @ApiProperty({ default: '25' })
   @IsNumberString()
   @IsNotEmpty()
-  itemPerPage: string;
-
-  @ApiProperty({ default: 'false' })
-  @IsBooleanString()
-  @IsNotEmpty()
-  itemDeleted: string;
+  itemsPerPage: string;
 
   @ApiPropertyOptional()
   @IsString()
@@ -29,23 +23,23 @@ export class GetListDto {
   @IsOptional()
   search?: string;
 
-  get getPage(): number {
+  get skip(): number {
     const num = Number(this.page);
-    if (Number.isNaN(num)) return 1;
-    return num;
+    if (Number.isNaN(num) || num < 1) return 0;
+    return num - 1;
   }
 
-  get getItemPerPage(): number {
-    const num = Number(this.itemPerPage);
+  get take(): number {
+    const num = Number(this.itemsPerPage);
     if (Number.isNaN(num)) return 25;
     return num;
   }
 
-  get getItemDeleted(): boolean {
-    return [true, 'enabled', 'true', 1, '1'].indexOf(this.itemDeleted) > -1;
+  get current(): number {
+    return this.skip + 1;
   }
 
-  get getSearch(): string {
+  get searchTerm(): string {
     return this.search || '';
   }
 }

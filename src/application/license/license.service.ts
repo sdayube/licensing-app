@@ -4,13 +4,25 @@ import { License } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateLicenseDto } from './dto/create-license.dto';
 import { UpdateLicenseDto } from './dto/update-license.dto';
+import { GetListDto } from '@core/common/dto/get-list.dto';
 
 @Injectable()
 export class LicenseService {
   constructor(private readonly licenseRepository: LicenseRepository) {}
 
-  async findAll(): Promise<License[]> {
-    return this.licenseRepository.findMany();
+  async findAll({ searchTerm, skip, take }: GetListDto): Promise<License[]> {
+    return this.licenseRepository.findMany(
+      {
+        description: { contains: searchTerm, mode: 'insensitive' },
+      },
+      { skip, take },
+    );
+  }
+
+  async count(searchTerm: string): Promise<number> {
+    return this.licenseRepository.count({
+      description: { contains: searchTerm, mode: 'insensitive' },
+    });
   }
 
   async findById(id: string): Promise<License> {

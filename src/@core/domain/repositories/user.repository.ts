@@ -8,8 +8,21 @@ import { UpdateUserDto } from 'src/application/user/dto/update-user.dto';
 export class UserRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findMany(filter: Prisma.UserWhereInput = {}): Promise<User[]> {
+  async findMany(
+    filter: Prisma.UserWhereInput = {},
+    pagination?: { skip?: number; take?: number },
+  ): Promise<User[]> {
     return this.prisma.user.findMany({
+      where: {
+        ...filter,
+        deletedAt: null,
+      },
+      ...pagination,
+    });
+  }
+
+  async count(filter: Prisma.UserWhereInput = {}): Promise<number> {
+    return this.prisma.user.count({
       where: {
         ...filter,
         deletedAt: null,

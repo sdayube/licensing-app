@@ -10,15 +10,41 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { OutputUserDto } from './dto/output-user.dto';
 import { exclude } from '@core/utils/exclude';
 import { User } from '@prisma/client';
+import { GetListDto } from '@core/common/dto/get-list.dto';
 
 @Injectable()
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async findAll(): Promise<OutputUserDto[]> {
+  async findAll({
+    searchTerm,
+    skip,
+    take,
+  }: GetListDto): Promise<OutputUserDto[]> {
     return this.userRepository
-      .findMany()
+      .findMany(
+        {
+          OR: [
+            { username: { contains: searchTerm, mode: 'insensitive' } },
+            { fullName: { contains: searchTerm, mode: 'insensitive' } },
+            { email: { contains: searchTerm, mode: 'insensitive' } },
+            { cpf: { contains: searchTerm, mode: 'insensitive' } },
+          ],
+        },
+        { skip, take },
+      )
       .then((users) => users.map((user) => exclude(user, ['password'])));
+  }
+
+  async count(searchTerm: string): Promise<number> {
+    return this.userRepository.count({
+      OR: [
+        { username: { contains: searchTerm, mode: 'insensitive' } },
+        { fullName: { contains: searchTerm, mode: 'insensitive' } },
+        { email: { contains: searchTerm, mode: 'insensitive' } },
+        { cpf: { contains: searchTerm, mode: 'insensitive' } },
+      ],
+    });
   }
 
   async findById(id: string): Promise<OutputUserDto> {

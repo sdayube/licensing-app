@@ -8,8 +8,21 @@ import { UpdateLicenseDto } from 'src/application/license/dto/update-license.dto
 export class LicenseRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findMany(filter: Prisma.LicenseWhereInput = {}): Promise<License[]> {
+  async findMany(
+    filter: Prisma.LicenseWhereInput = {},
+    pagination?: { skip?: number; take?: number },
+  ): Promise<License[]> {
     return this.prisma.license.findMany({
+      where: {
+        ...filter,
+        deletedAt: null,
+      },
+      ...pagination,
+    });
+  }
+
+  async count(filter: Prisma.LicenseWhereInput = {}): Promise<number> {
+    return this.prisma.license.count({
       where: {
         ...filter,
         deletedAt: null,

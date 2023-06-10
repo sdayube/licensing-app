@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { ClientModule } from './client/client.module';
 import { UserModule } from './user/user.module';
+import { LicenseModule } from './license/license.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UserModule } from './user/user.module';
     AuthModule,
     ClientModule,
     UserModule,
+    LicenseModule,
   ],
   providers: [
     {

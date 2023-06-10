@@ -13,7 +13,7 @@ import { UpdateClientDto } from './dto/update-client.dto';
 import { ClientService } from './client.service';
 import { Client } from '@prisma/client';
 
-@ApiTags('clients')
+@ApiTags('Clients')
 @Controller('clients')
 export class ClientController {
   constructor(private readonly clientService: ClientService) {}

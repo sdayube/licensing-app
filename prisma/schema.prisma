@@ -41,18 +41,18 @@ model User {
 }
 
 model License {
-  id             String    @id @default(uuid())
+  id             String     @id @default(uuid())
   description    String
-  expirationDate DateTime  @map("expiration_date")
+  expirationDate DateTime   @map("expiration_date")
   status         String
-  clientId       String    @map("client_id")
-  licenseKey     String    @map("license_key")
-  robotTypeId    String    @map("robot_type_id")
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt @map("updated_at")
-  deletedAt      DateTime? @map("deleted_at")
-  client         Client    @relation(fields: [clientId], references: [id])
-  robot_type     RobotType @relation(fields: [robotTypeId], references: [id])
+  clientId       String     @map("client_id")
+  licenseKey     String     @map("license_key")
+  robotTypeId    String?    @map("robot_type_id")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+  deletedAt      DateTime?  @map("deleted_at")
+  client         Client     @relation(fields: [clientId], references: [id])
+  robotType      RobotType? @relation(fields: [robotTypeId], references: [id])
 
   @@map("licenses")
 }

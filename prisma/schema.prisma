@@ -31,6 +31,7 @@ model User {
   cpf       String
   phone     String
   password  String
+  role      String    @default("user")
   clientId  String    @map("client_id")
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
@@ -60,6 +61,7 @@ model License {
 model RobotType {
   id        String    @id @default(uuid())
   title     String
+  status    String
   bankId    String    @map("bank_id")
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")

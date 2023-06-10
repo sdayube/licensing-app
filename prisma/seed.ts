@@ -28,6 +28,7 @@ const adminUser: User = {
   email: SEED_EMAIL,
   cpf: '00000000000',
   phone: '00000000000',
+  role: 'admin',
   password: bcrypt.hashSync(SEED_PASSWORD, parseInt(SECURITY_SALTS)),
   clientId: clientId,
   createdAt: new Date(),

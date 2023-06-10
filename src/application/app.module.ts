@@ -9,6 +9,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { ClientModule } from './client/client.module';
 import { UserModule } from './user/user.module';
 import { LicenseModule } from './license/license.module';
+import { RobotModule } from './robot/robot.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { LicenseModule } from './license/license.module';
     ClientModule,
     UserModule,
     LicenseModule,
+    RobotModule,
   ],
   providers: [
     {

@@ -61,7 +61,6 @@ model License {
 model RobotType {
   id        String    @id @default(uuid())
   title     String
-  status    String
   bankId    String    @map("bank_id")
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
@@ -77,6 +76,7 @@ model Robot {
   id        String    @id @default(uuid())
   title     String
   type      String
+  status    String
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")

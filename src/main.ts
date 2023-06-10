@@ -9,6 +9,7 @@ import { PrismaExceptionFilter } from './common/errors/PrismaExceptionFilter';
 import { ClientModule } from './application/client/client.module';
 import { LicenseModule } from './application/license/license.module';
 import { RobotModule } from './application/robot/robot.module';
+import { RobotTypeModule } from './application/robot-type/robot-type.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -33,7 +34,14 @@ async function bootstrap() {
     .build();
 
   const options: SwaggerDocumentOptions = {
-    include: [AuthModule, ClientModule, UserModule, LicenseModule, RobotModule],
+    include: [
+      AuthModule,
+      ClientModule,
+      UserModule,
+      LicenseModule,
+      RobotModule,
+      RobotTypeModule,
+    ],
   };
 
   const document = SwaggerModule.createDocument(app, config, options);

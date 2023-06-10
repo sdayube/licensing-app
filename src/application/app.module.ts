@@ -10,6 +10,7 @@ import { ClientModule } from './client/client.module';
 import { UserModule } from './user/user.module';
 import { LicenseModule } from './license/license.module';
 import { RobotModule } from './robot/robot.module';
+import { RobotTypeModule } from './robot-type/robot-type.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { RobotModule } from './robot/robot.module';
     UserModule,
     LicenseModule,
     RobotModule,
+    RobotTypeModule,
   ],
   providers: [
     {

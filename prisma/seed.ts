@@ -8,18 +8,48 @@ const SEED_EMAIL = process.env.PRISMA_SEED_ADMIN_EMAIL;
 const SEED_PASSWORD = process.env.PRISMA_SEED_ADMIN_PASSWORD;
 const SECURITY_SALTS = process.env.SECURITY_SALTS;
 
-const adminUser: User = {
-  id: generateUUID(),
-  username: 'admin',
-  fullName: 'Admin',
-  cpf: '00000000000',
-  phone: '00000000000',
+const userId = generateUUID();
+const clientId = generateUUID();
+
+const adminClient = {
+  id: clientId,
+  name: 'Admin',
   email: SEED_EMAIL,
-  password: bcrypt.hashSync(SEED_PASSWORD, parseInt(SECURITY_SALTS)),
+  phone: '00000000000',
   createdAt: new Date(),
   updatedAt: new Date(),
   deletedAt: null,
 };
+
+const adminUser: User = {
+  id: userId,
+  username: 'admin',
+  fullName: 'Admin',
+  email: SEED_EMAIL,
+  cpf: '00000000000',
+  phone: '00000000000',
+  password: bcrypt.hashSync(SEED_PASSWORD, parseInt(SECURITY_SALTS)),
+  clientId: clientId,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  deletedAt: null,
+};
+
+async function seedClient() {
+  let client = await prisma.client.findFirst({
+    where: {
+      email: adminClient.email,
+    },
+  });
+
+  if (!client) {
+    client = await prisma.client.create({
+      data: adminClient,
+    });
+  }
+
+  return client;
+}
 
 async function seedUser() {
   let user = await prisma.user.findFirst({
@@ -38,6 +68,7 @@ async function seedUser() {
 }
 
 async function main() {
+  await seedClient();
   await seedUser();
 }
 

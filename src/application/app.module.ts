@@ -1,12 +1,13 @@
+import { PrismaModule } from '@core/infra/database/prisma.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { ClientModule } from './client/client.module';
 import { UserModule } from './user/user.module';
-import { JwtModule } from '@nestjs/jwt';
-import { PrismaModule } from '@core/infra/database/prisma.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { PrismaModule } from '@core/infra/database/prisma.module';
     }),
     PrismaModule,
     AuthModule,
+    ClientModule,
     UserModule,
   ],
   providers: [

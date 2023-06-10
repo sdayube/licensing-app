@@ -1,5 +1,6 @@
-import { UserRepository } from './users.repository';
+import { ClientRepository } from './client.repository';
+import { UserRepository } from './user.repository';
 
-export const repositoryProviders = [UserRepository];
+export const repositoryProviders = [ClientRepository, UserRepository];
 
-export { UserRepository };
+export { ClientRepository, UserRepository };

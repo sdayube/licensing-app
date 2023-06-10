@@ -7,6 +7,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Client {
+  id        String    @id @default(uuid())
+  name      String
+  email     String
+  phone     String
+  cpf       String?
+  cnpj      String?
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  users     User[]
+  licenses  License[]
+
+  @@map("clients")
+}
+
 model User {
   id        String    @id @default(uuid())
   username  String
@@ -15,9 +31,67 @@ model User {
   cpf       String
   phone     String
   password  String
+  clientId  String    @map("client_id")
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
+  client    Client    @relation(fields: [clientId], references: [id])
 
   @@map("users")
+}
+
+model License {
+  id             String    @id @default(uuid())
+  description    String
+  expirationDate DateTime  @map("expiration_date")
+  status         String
+  clientId       String    @map("client_id")
+  licenseKey     String    @map("license_key")
+  robotTypeId    String    @map("robot_type_id")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+  client         Client    @relation(fields: [clientId], references: [id])
+  robot_type     RobotType @relation(fields: [robotTypeId], references: [id])
+
+  @@map("licenses")
+}
+
+model RobotType {
+  id        String    @id @default(uuid())
+  title     String
+  bankId    String    @map("bank_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  bank      Bank      @relation(fields: [bankId], references: [id])
+  licenses  License[]
+  robots    Robot[]
+
+  @@map("robot_types")
+}
+
+model Robot {
+  id        String    @id @default(uuid())
+  title     String
+  type      String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  robotType RobotType @relation(fields: [type], references: [id])
+
+  @@map("robots")
+}
+
+model Bank {
+  id           String      @id @default(uuid())
+  name         String
+  phone        String
+  febrabanCode Int         @map("febraban_code")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  deletedAt    DateTime?   @map("deleted_at")
+  robotTypes   RobotType[]
+
+  @@map("banks")
 }

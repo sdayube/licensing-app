@@ -24,4 +24,8 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   password: string;
+
+  @IsNotEmpty()
+  @IsString()
+  clientId: string;
 }

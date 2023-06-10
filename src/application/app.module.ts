@@ -11,6 +11,7 @@ import { UserModule } from './user/user.module';
 import { LicenseModule } from './license/license.module';
 import { RobotModule } from './robot/robot.module';
 import { RobotTypeModule } from './robot-type/robot-type.module';
+import { BankModule } from './bank/bank.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { RobotTypeModule } from './robot-type/robot-type.module';
     LicenseModule,
     RobotModule,
     RobotTypeModule,
+    BankModule,
   ],
   providers: [
     {

@@ -10,6 +10,7 @@ import { ClientModule } from './application/client/client.module';
 import { LicenseModule } from './application/license/license.module';
 import { RobotModule } from './application/robot/robot.module';
 import { RobotTypeModule } from './application/robot-type/robot-type.module';
+import { BankModule } from './application/bank/bank.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -41,6 +42,7 @@ async function bootstrap() {
       LicenseModule,
       RobotModule,
       RobotTypeModule,
+      BankModule,
     ],
   };
 

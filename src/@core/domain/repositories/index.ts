@@ -3,6 +3,7 @@ import { LicenseRepository } from './license.repository';
 import { RobotTypeRepository } from './robot-type.repository';
 import { RobotRepository } from './robot.repository';
 import { UserRepository } from './user.repository';
+import { BankRepository } from './bank.repository';
 
 export const repositoryProviders = [
   ClientRepository,
@@ -10,6 +11,7 @@ export const repositoryProviders = [
   LicenseRepository,
   RobotRepository,
   RobotTypeRepository,
+  BankRepository,
 ];
 
 export {
@@ -18,4 +20,5 @@ export {
   LicenseRepository,
   RobotRepository,
   RobotTypeRepository,
+  BankRepository,
 };

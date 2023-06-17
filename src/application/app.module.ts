@@ -14,6 +14,7 @@ import { RobotTypeModule } from './robot-type/robot-type.module';
 import { BankModule } from './bank/bank.module';
 import { TaskModule } from './task/task.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { RabbitMQModule } from 'src/common/connections/rabbitmq/rabbitmq.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     }),
     ScheduleModule.forRoot(),
     PrismaModule,
+    RabbitMQModule,
     AuthModule,
     ClientModule,
     UserModule,

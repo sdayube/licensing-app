@@ -4,7 +4,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Task } from '@prisma/client';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { Cron } from '@nestjs/schedule';
+// import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class TaskService {
@@ -39,23 +39,23 @@ export class TaskService {
     return this.taskRepository.update(id, updateTaskDto);
   }
 
-  @Cron('*/1 * * * *')
-  async processPendingTasks(): Promise<void> {
-    console.log(`Processing pending tasks`);
-    const tasks = await this.taskRepository.findMany({
-      status: 'pending',
-    });
+  // @Cron('*/1 * * * *')
+  // async processPendingTasks(): Promise<void> {
+  //   console.log(`Processing pending tasks`);
+  //   const tasks = await this.taskRepository.findMany({
+  //     status: 'pending',
+  //   });
 
-    console.log(`Pending tasks: ${tasks.map((task) => task.id).join(', ')}`);
+  //   console.log(`Pending tasks: ${tasks.map((task) => task.id).join(', ')}`);
 
-    tasks.forEach((task) => {
-      console.log(`Processing task ${task.id}:`);
-      this.taskRepository.update(task.id, {
-        status: 'finished',
-        result: {
-          message: 'Task finished successfully',
-        },
-      });
-    });
-  }
+  //   tasks.forEach((task) => {
+  //     console.log(`Processing task ${task.id}:`);
+  //     this.taskRepository.update(task.id, {
+  //       status: 'finished',
+  //       result: {
+  //         message: 'Task finished successfully',
+  //       },
+  //     });
+  //   });
+  // }
 }

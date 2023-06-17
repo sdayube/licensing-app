@@ -48,7 +48,6 @@ model License {
   status         String
   hasQueue       Boolean    @default(false) @map("has_queue")
   clientId       String     @map("client_id")
-  licenseKey     String     @map("license_key")
   robotTypeId    String?    @map("robot_type_id")
   createdAt      DateTime   @default(now()) @map("created_at")
   updatedAt      DateTime   @updatedAt @map("updated_at")

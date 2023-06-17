@@ -1,12 +1,12 @@
-import { IsEnum, IsNotEmpty, IsObject, ValidateNested } from 'class-validator';
+import { IsIn, IsNotEmpty, IsObject, ValidateNested } from 'class-validator';
 
 export class UpdateTaskDto {
   @IsNotEmpty()
   @IsObject()
   @ValidateNested()
-  result: Record<string, any>;
+  result?: Record<string, any>;
 
   @IsNotEmpty()
-  @IsEnum(['processing', 'finished', 'failed'])
-  status: string;
+  @IsIn(['processing', 'finished', 'failed'])
+  status: 'processing' | 'finished' | 'failed';
 }

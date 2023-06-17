@@ -25,7 +25,7 @@ export class CreateRobotDto {
   @ApiProperty({ example: 'active' })
   @IsNotEmpty()
   @IsIn(['active', 'suspended'])
-  status: string;
+  status: 'active' | 'suspended';
 
   @ApiProperty({ example: 'https://www.example.com/' })
   @IsUrl()

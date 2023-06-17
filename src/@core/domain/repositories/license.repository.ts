@@ -42,7 +42,7 @@ export class LicenseRepository {
   }
 
   async create(
-    data: CreateLicenseDto & { licenseKey: string; hasQueue?: boolean },
+    data: CreateLicenseDto & { hasQueue?: boolean },
   ): Promise<License> {
     return this.prisma.license.create({ data });
   }

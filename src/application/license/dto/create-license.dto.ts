@@ -23,7 +23,7 @@ export class CreateLicenseDto {
   @ApiProperty({ example: 'active' })
   @IsNotEmpty()
   @IsIn(['active', 'suspended', 'canceled'])
-  status: string;
+  status: 'active' | 'suspended' | 'canceled';
 
   @ApiProperty({ example: 'clientId' })
   @IsNotEmpty()

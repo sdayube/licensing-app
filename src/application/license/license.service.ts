@@ -40,29 +40,19 @@ export class LicenseService {
     return license;
   }
 
-  async findByLicenseKey(licenseKey: string): Promise<License> {
-    const license = await this.licenseRepository.findOne({ licenseKey });
+  async create(createLicenseDto: CreateLicenseDto): Promise<License> {
+    const hasQueue = this.validateLicense(createLicenseDto);
 
-    if (!license) {
-      throw new NotFoundException();
+    const license = await this.licenseRepository.create({
+      ...createLicenseDto,
+      hasQueue,
+    });
+
+    if (hasQueue) {
+      await this.rabbitMQService.createQueue(`license.${license.id}`);
     }
 
     return license;
-  }
-
-  async create(createLicenseDto: CreateLicenseDto): Promise<License> {
-    const licenseKey = this.generateLicenseKey();
-    const hasQueue = this.validateLicense(createLicenseDto);
-
-    if (hasQueue) {
-      await this.rabbitMQService.createQueue(`license.${licenseKey}`);
-    }
-
-    return this.licenseRepository.create({
-      ...createLicenseDto,
-      licenseKey,
-      hasQueue,
-    });
   }
 
   async update(
@@ -73,12 +63,12 @@ export class LicenseService {
     const hasQueue = this.validateLicense(license);
 
     if (hasQueue && !license.hasQueue) {
-      await this.rabbitMQService.createQueue(`license.${license.licenseKey}`);
+      await this.rabbitMQService.createQueue(`license.${license.id}`);
       license = await this.licenseRepository.update(id, { hasQueue: true });
     }
 
     if (!hasQueue && license.hasQueue) {
-      await this.rabbitMQService.deleteQueue(`license.${license.licenseKey}`);
+      await this.rabbitMQService.deleteQueue(`license.${license.id}`);
       license = await this.licenseRepository.update(id, { hasQueue: false });
     }
 
@@ -89,47 +79,49 @@ export class LicenseService {
     let license = await this.licenseRepository.delete(id);
 
     if (license.hasQueue) {
-      await this.rabbitMQService.deleteQueue(`license.${license.licenseKey}`);
+      await this.rabbitMQService.deleteQueue(`license.${license.id}`);
       license = await this.licenseRepository.update(id, { hasQueue: false });
     }
 
     return license;
   }
 
-  async validateLicenseKey(
-    licenseKey: string,
+  async validateLicenseById(
+    id: string,
   ): Promise<{ isValid: boolean; license: License }> {
-    const license = await this.findByLicenseKey(licenseKey);
+    const license = await this.licenseRepository.findOne({ id });
+
+    if (!license) {
+      throw new NotFoundException();
+    }
 
     const isValid = this.validateLicense(license);
 
     return { isValid, license };
   }
 
-  @Cron('*/10 * * * *')
-  async deactivateInvalidLicenseQueues(): Promise<void> {
-    console.log('Deactivating invalid license queues...');
+  @Cron(process.env.LICENSE_EXPIRED_VERIFICATION_CRON)
+  async deactivateExpiredLicenseQueues(): Promise<void> {
+    console.log('Deactivating expired license queues...');
     const licenses = await this.licenseRepository.findMany({
-      OR: [
-        { status: { not: 'active' }, hasQueue: true },
-        { expirationDate: { lte: new Date() }, hasQueue: true },
-      ],
+      expirationDate: { lte: new Date() },
+      hasQueue: true,
     });
 
     console.log(
-      `Found ${licenses.length} invalid licenses with active queues.`,
+      `Found ${licenses.length} expired licenses with active queues.`,
     );
 
     await Promise.all(
-      licenses.map(({ id, licenseKey }) =>
+      licenses.map(({ id }) =>
         this.rabbitMQService
-          .deleteQueue(`license.${licenseKey}`)
+          .deleteQueue(`license.${id}`)
           .then(() => this.licenseRepository.update(id, { hasQueue: false }))
-          .then(() => console.log(`Queue license.${licenseKey} deactivated.`)),
+          .then(() => console.log(`Queue license.${id} deactivated.`)),
       ),
     );
 
-    licenses.length && console.log('All invalid license queues deactivated.');
+    licenses.length && console.log('All expired license queues deactivated.');
   }
 
   private generateLicenseKey(): string {

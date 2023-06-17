@@ -1,14 +1,25 @@
 import { GetListDto } from '@core/common/dto/get-list.dto';
 import { TaskRepository } from '@core/domain/repositories';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Task } from '@prisma/client';
+import { LicenseService } from '../license/license.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-// import { Cron } from '@nestjs/schedule';
+import { RabbitMQService } from 'src/common/connections/rabbitmq/rabbitmq.service';
 
 @Injectable()
 export class TaskService {
-  constructor(private readonly taskRepository: TaskRepository) {}
+  constructor(
+    private readonly taskRepository: TaskRepository,
+    private readonly licenseService: LicenseService,
+    private readonly rabbitMQService: RabbitMQService,
+  ) {
+    this.consumeRobotResponses();
+  }
 
   async findAll({
     skip,
@@ -32,30 +43,38 @@ export class TaskService {
   }
 
   async create(createTaskDto: CreateTaskDto): Promise<Task> {
-    return this.taskRepository.create(createTaskDto);
+    const { isValid: isLicenseValid, license } =
+      await this.licenseService.validateLicenseById(createTaskDto.licenseId);
+
+    if (!isLicenseValid) throw new BadRequestException('Invalid license');
+
+    if (!license.hasQueue)
+      throw new BadRequestException('License does not have an assigned queue');
+
+    const task = await this.taskRepository.create(createTaskDto);
+
+    this.rabbitMQService.publishMessage(
+      `license.${license.id}`,
+      JSON.stringify(task),
+    );
+
+    return this.taskRepository.update(task.id, {
+      status: 'processing',
+    });
   }
 
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<Task> {
     return this.taskRepository.update(id, updateTaskDto);
   }
 
-  // @Cron('*/1 * * * *')
-  // async processPendingTasks(): Promise<void> {
-  //   console.log(`Processing pending tasks`);
-  //   const tasks = await this.taskRepository.findMany({
-  //     status: 'pending',
-  //   });
-
-  //   console.log(`Pending tasks: ${tasks.map((task) => task.id).join(', ')}`);
-
-  //   tasks.forEach((task) => {
-  //     console.log(`Processing task ${task.id}:`);
-  //     this.taskRepository.update(task.id, {
-  //       status: 'finished',
-  //       result: {
-  //         message: 'Task finished successfully',
-  //       },
-  //     });
-  //   });
-  // }
+  async consumeRobotResponses() {
+    await this.rabbitMQService.consumeMessages('robot.response', (message) => {
+      console.log(`Received message ${message}`);
+      const response = JSON.parse(message);
+      this.update(response.id, {
+        status: response.status,
+        result: response.result,
+      });
+    });
+  }
 }

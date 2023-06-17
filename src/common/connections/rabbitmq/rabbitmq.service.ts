@@ -5,14 +5,19 @@ import { connect, Connection, Channel } from 'amqplib';
 export class RabbitMQService {
   private connection: Connection;
   private channel: Channel;
+  private connectionPromise: Promise<void>;
 
   constructor() {
     this.connect();
   }
 
   async connect() {
-    this.connection = await connect(process.env.RABBITMQ_URL);
-    this.channel = await this.connection.createChannel();
+    this.connectionPromise = new Promise<void>(async (resolve) => {
+      this.connection = await connect(process.env.RABBITMQ_URL);
+      this.channel = await this.connection.createChannel();
+      this.createQueue('robot.response');
+      resolve();
+    });
   }
 
   async createQueue(queueName: string) {
@@ -31,6 +36,8 @@ export class RabbitMQService {
     queueName: string,
     callback: (message: string) => void,
   ) {
+    await this.connectionPromise;
+    console.log(`Consuming messages from ${queueName}`);
     this.channel.consume(queueName, (message) => {
       if (message) {
         const content = message.content.toString();

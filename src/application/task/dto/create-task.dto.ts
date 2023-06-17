@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsObject, IsUUID, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsObject, IsUUID } from 'class-validator';
 
 export class CreateTaskDto {
   @IsNotEmpty()
@@ -11,6 +11,5 @@ export class CreateTaskDto {
 
   @IsNotEmpty()
   @IsObject()
-  @ValidateNested()
   parameters: Record<string, any>;
 }

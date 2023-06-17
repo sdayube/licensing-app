@@ -1,11 +1,9 @@
-import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateRobotTypeDto {
+  @ApiProperty({ example: 'Higienização' })
   @IsNotEmpty()
   @IsString()
   title: string;
-
-  @IsNotEmpty()
-  @IsDateString()
-  bankId: string;
 }

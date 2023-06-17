@@ -4,6 +4,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Robot } from '@prisma/client';
 import { CreateRobotDto } from './dto/create-robot.dto';
 import { UpdateRobotDto } from './dto/update-robot.dto';
+import { checkUniqueness } from '@core/common/helpers/checkUniqueness';
 
 @Injectable()
 export class RobotService {
@@ -25,20 +26,28 @@ export class RobotService {
   }
 
   async findById(id: string): Promise<Robot> {
-    const license = await this.robotRepository.findOne({ id });
+    const robot = await this.robotRepository.findOne({ id });
 
-    if (!license) {
+    if (!robot) {
       throw new NotFoundException();
     }
 
-    return license;
+    return robot;
   }
 
   async create(createRobotDto: CreateRobotDto): Promise<Robot> {
+    const { title, url } = createRobotDto;
+    await checkUniqueness({ title, url }, this.robotRepository);
+
     return this.robotRepository.create(createRobotDto);
   }
 
   async update(id: string, updateRobotDto: UpdateRobotDto): Promise<Robot> {
+    const { title, url } = updateRobotDto;
+    await checkUniqueness({ title, url }, this.robotRepository, {
+      excludeId: id,
+    });
+
     return this.robotRepository.update(id, updateRobotDto);
   }
 

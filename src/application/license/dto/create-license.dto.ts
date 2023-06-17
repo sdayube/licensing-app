@@ -1,29 +1,36 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsNotEmpty,
-  IsString,
   IsDateString,
-  IsEnum,
-  IsUUID,
+  IsIn,
+  IsNotEmpty,
   IsOptional,
+  IsString,
+  IsUUID,
 } from 'class-validator';
+import moment from 'moment';
 
 export class CreateLicenseDto {
+  @ApiProperty({ example: 'Licença 1' })
   @IsNotEmpty()
   @IsString()
   description: string;
 
+  @ApiProperty({ example: moment().add(1, 'month').toISOString() })
   @IsNotEmpty()
-  @IsDateString()
+  @IsDateString({ strict: true })
   expirationDate: string;
 
+  @ApiProperty({ example: 'active' })
   @IsNotEmpty()
-  @IsEnum(['active', 'suspended', 'canceled'])
+  @IsIn(['active', 'suspended', 'canceled'])
   status: string;
 
+  @ApiProperty({ example: 'clientId' })
   @IsNotEmpty()
   @IsUUID()
   clientId: string;
 
+  @ApiProperty({ example: 'robotId' })
   @IsNotEmpty()
   @IsUUID()
   @IsOptional()

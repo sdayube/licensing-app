@@ -62,11 +62,9 @@ model License {
 model RobotType {
   id        String    @id @default(uuid())
   title     String
-  bankId    String    @map("bank_id")
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
-  bank      Bank      @relation(fields: [bankId], references: [id])
   licenses  License[]
   robots    Robot[]
 
@@ -76,41 +74,49 @@ model RobotType {
 model Robot {
   id        String    @id @default(uuid())
   title     String
-  type      String
+  typeId    String
   status    String
+  bankId    String?   @map("bank_id")
+  url       String
+  username  String
+  password  String
+  params    Json //outros dados exigidos pelo banco
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
-  robotType RobotType @relation(fields: [type], references: [id])
+  robotType RobotType @relation(fields: [typeId], references: [id])
   tasks     Task[]
+  bank      Bank?     @relation(fields: [bankId], references: [id])
 
   @@map("robots")
 }
 
 model Bank {
-  id           String      @id @default(uuid())
+  id           String    @id @default(uuid())
   name         String
   phone        String
-  febrabanCode Int         @map("febraban_code")
-  createdAt    DateTime    @default(now()) @map("created_at")
-  updatedAt    DateTime    @updatedAt @map("updated_at")
-  deletedAt    DateTime?   @map("deleted_at")
-  robotTypes   RobotType[]
+  email        String
+  febrabanCode Int       @map("febraban_code")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+  Robot        Robot[]
 
   @@map("banks")
 }
 
 model Task {
-  id         String   @id @default(uuid())
-  licenseId  String   @map("license_id")
-  robotId    String   @map("robot_id")
-  status     String   @default("pending")
+  id         String    @id @default(uuid())
+  licenseId  String    @map("license_id")
+  robotId    String    @map("robot_id")
+  status     String    @default("pending")
   parameters Json
   result     Json?
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
-  license    License  @relation(fields: [licenseId], references: [id])
-  robot      Robot    @relation(fields: [robotId], references: [id])
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  finishedAt DateTime? @map("finished_at")
+  license    License   @relation(fields: [licenseId], references: [id])
+  robot      Robot     @relation(fields: [robotId], references: [id])
 
   @@map("tasks")
 }

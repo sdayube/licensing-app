@@ -14,7 +14,7 @@ export class TaskService {
     skip,
     take,
   }: Omit<GetListDto, 'searchTerm'>): Promise<Task[]> {
-    return this.taskRepository.findMany(null, { skip, take });
+    return this.taskRepository.findMany({}, { skip, take });
   }
 
   async count(): Promise<number> {
@@ -22,13 +22,13 @@ export class TaskService {
   }
 
   async findById(id: string): Promise<Task> {
-    const license = await this.taskRepository.findOne({ id });
+    const task = await this.taskRepository.findOne({ id });
 
-    if (!license) {
+    if (!task) {
       throw new NotFoundException();
     }
 
-    return license;
+    return task;
   }
 
   async create(createTaskDto: CreateTaskDto): Promise<Task> {
@@ -45,6 +45,8 @@ export class TaskService {
     const tasks = await this.taskRepository.findMany({
       status: 'pending',
     });
+
+    console.log(`Pending tasks: ${tasks.map((task) => task.id).join(', ')}`);
 
     tasks.forEach((task) => {
       console.log(`Processing task ${task.id}:`);

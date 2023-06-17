@@ -40,6 +40,13 @@ export class LicenseController {
     return this.licenseService.findById(id);
   }
 
+  @Get('validate/:licenseKey')
+  async validateLicenseKey(
+    @Param('licenseKey') licenseKey: string,
+  ): Promise<{ isValid: boolean; license: License }> {
+    return this.licenseService.validateLicenseKey(licenseKey);
+  }
+
   @Post()
   async create(@Body() createLicenseDto: CreateLicenseDto): Promise<License> {
     return this.licenseService.create(createLicenseDto);

@@ -35,6 +35,16 @@ export class LicenseService {
     return license;
   }
 
+  async findByLicenseKey(licenseKey: string): Promise<License> {
+    const license = await this.licenseRepository.findOne({ licenseKey });
+
+    if (!license) {
+      throw new NotFoundException();
+    }
+
+    return license;
+  }
+
   async create(createLicenseDto: CreateLicenseDto): Promise<License> {
     const licenseKey = this.generateLicenseKey();
     return this.licenseRepository.create({ ...createLicenseDto, licenseKey });
@@ -49,6 +59,17 @@ export class LicenseService {
 
   async delete(id: string): Promise<License> {
     return this.licenseRepository.delete(id);
+  }
+
+  async validateLicenseKey(
+    licenseKey: string,
+  ): Promise<{ isValid: boolean; license: License }> {
+    const license = await this.findByLicenseKey(licenseKey);
+
+    const isValid =
+      license.status === 'active' && license.expirationDate > new Date();
+
+    return { isValid, license };
   }
 
   private generateLicenseKey(): string {

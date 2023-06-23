@@ -1,0 +1,134 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table clients {
+  id String [pk]
+  name String [not null]
+  email String [not null]
+  phone String [not null]
+  cpf String
+  cnpj String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  deletedAt DateTime
+  users users [not null]
+  licenses licenses [not null]
+}
+
+Table users {
+  id String [pk]
+  username String [not null]
+  fullName String [not null]
+  email String [not null]
+  cpf String [not null]
+  phone String [not null]
+  password String [not null]
+  role String [not null, default: 'user']
+  clientId String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  deletedAt DateTime
+  client clients [not null]
+}
+
+Table licenses {
+  id String [pk]
+  description String [not null]
+  expirationDate DateTime [not null]
+  status String [not null]
+  hasQueue Boolean [not null, default: false]
+  clientId String [not null]
+  robotId String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  deletedAt DateTime
+  client clients [not null]
+  robot robots
+  tasks tasks [not null]
+  Credentials credential [not null]
+}
+
+Table credential {
+  id String [pk]
+  username String [not null]
+  password String [not null]
+  bankId String [not null]
+  licenseId String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  deletedAt DateTime
+  bank banks [not null]
+  license licenses [not null]
+}
+
+Table robot_types {
+  id String [pk]
+  title String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  deletedAt DateTime
+  robots robots [not null]
+}
+
+Table robots {
+  id String [pk]
+  title String [not null]
+  typeId String [not null]
+  status String [not null]
+  bankId String
+  url String [not null]
+  params Json [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  deletedAt DateTime
+  robotType robot_types [not null]
+  bank banks
+  licenses licenses [not null]
+  tasks tasks [not null]
+}
+
+Table banks {
+  id String [pk]
+  name String [not null]
+  phone String [not null]
+  email String [not null]
+  febrabanCode Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  deletedAt DateTime
+  Robot robots [not null]
+  Credentials credential [not null]
+}
+
+Table tasks {
+  id String [pk]
+  licenseId String [not null]
+  robotId String [not null]
+  status String [not null, default: 'pending']
+  parameters Json [not null]
+  result Json
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  finishedAt DateTime
+  license licenses [not null]
+  robot robots [not null]
+}
+
+Ref: users.clientId > clients.id
+
+Ref: licenses.clientId > clients.id
+
+Ref: licenses.robotId > robots.id
+
+Ref: credential.bankId > banks.id
+
+Ref: credential.licenseId > licenses.id
+
+Ref: robots.typeId > robot_types.id
+
+Ref: robots.bankId > banks.id
+
+Ref: tasks.licenseId > licenses.id
+
+Ref: tasks.robotId > robots.id

@@ -15,6 +15,7 @@ import { BankModule } from './bank/bank.module';
 import { TaskModule } from './task/task.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RabbitMQModule } from 'src/common/connections/rabbitmq/rabbitmq.module';
+import { CredentialModule } from './credentials/credential.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { RabbitMQModule } from 'src/common/connections/rabbitmq/rabbitmq.module'
     RobotTypeModule,
     BankModule,
     TaskModule,
+    CredentialModule,
   ],
   providers: [
     {

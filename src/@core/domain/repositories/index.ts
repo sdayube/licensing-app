@@ -5,6 +5,7 @@ import { RobotRepository } from './robot.repository';
 import { UserRepository } from './user.repository';
 import { BankRepository } from './bank.repository';
 import { TaskRepository } from './task.repository';
+import { CredentialRepository } from './credential.repository';
 
 export const repositoryProviders = [
   ClientRepository,
@@ -14,6 +15,7 @@ export const repositoryProviders = [
   RobotTypeRepository,
   BankRepository,
   TaskRepository,
+  CredentialRepository,
 ];
 
 export {
@@ -24,4 +26,5 @@ export {
   RobotTypeRepository,
   BankRepository,
   TaskRepository,
+  CredentialRepository,
 };

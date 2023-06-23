@@ -31,16 +31,6 @@ export class CreateRobotDto {
   @IsUrl()
   url: string;
 
-  @ApiProperty({ example: 'robo001' })
-  @IsNotEmpty()
-  @IsString()
-  username: string;
-
-  @ApiProperty({ example: '123456' })
-  @IsNotEmpty()
-  @IsString()
-  password: string;
-
   @ApiProperty({ example: { param1: 'value1' } })
   @IsObject()
   params: Record<string, any>;

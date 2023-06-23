@@ -34,5 +34,5 @@ export class CreateLicenseDto {
   @IsNotEmpty()
   @IsUUID()
   @IsOptional()
-  robotTypeId?: string;
+  robotId?: string;
 }

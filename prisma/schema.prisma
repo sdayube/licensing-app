@@ -2,6 +2,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -42,21 +46,37 @@ model User {
 }
 
 model License {
-  id             String     @id @default(uuid())
+  id             String       @id @default(uuid())
   description    String
-  expirationDate DateTime   @map("expiration_date")
+  expirationDate DateTime     @map("expiration_date")
   status         String
-  hasQueue       Boolean    @default(false) @map("has_queue")
-  clientId       String     @map("client_id")
-  robotTypeId    String?    @map("robot_type_id")
-  createdAt      DateTime   @default(now()) @map("created_at")
-  updatedAt      DateTime   @updatedAt @map("updated_at")
-  deletedAt      DateTime?  @map("deleted_at")
-  client         Client     @relation(fields: [clientId], references: [id])
-  robotType      RobotType? @relation(fields: [robotTypeId], references: [id])
+  hasQueue       Boolean      @default(false) @map("has_queue")
+  clientId       String       @map("client_id")
+  robotId        String?      @map("robot_id")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  deletedAt      DateTime?    @map("deleted_at")
+  client         Client       @relation(fields: [clientId], references: [id])
+  robot          Robot?       @relation(fields: [robotId], references: [id])
   tasks          Task[]
+  Credentials    Credential[]
 
   @@map("licenses")
+}
+
+model Credential {
+  id        String    @id @default(uuid())
+  username  String
+  password  String
+  bankId    String    @map("bank_id")
+  licenseId String    @map("license_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  bank      Bank      @relation(fields: [bankId], references: [id])
+  license   License   @relation(fields: [licenseId], references: [id])
+
+  @@map("credential")
 }
 
 model RobotType {
@@ -65,7 +85,6 @@ model RobotType {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
-  licenses  License[]
   robots    Robot[]
 
   @@map("robot_types")
@@ -78,29 +97,29 @@ model Robot {
   status    String
   bankId    String?   @map("bank_id")
   url       String
-  username  String
-  password  String
   params    Json //outros dados exigidos pelo banco
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
   robotType RobotType @relation(fields: [typeId], references: [id])
-  tasks     Task[]
   bank      Bank?     @relation(fields: [bankId], references: [id])
+  licenses  License[]
+  tasks     Task[]
 
   @@map("robots")
 }
 
 model Bank {
-  id           String    @id @default(uuid())
+  id           String       @id @default(uuid())
   name         String
   phone        String
   email        String
-  febrabanCode Int       @map("febraban_code")
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
-  deletedAt    DateTime? @map("deleted_at")
+  febrabanCode Int          @map("febraban_code")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+  deletedAt    DateTime?    @map("deleted_at")
   Robot        Robot[]
+  Credentials  Credential[]
 
   @@map("banks")
 }

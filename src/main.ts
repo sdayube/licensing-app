@@ -12,6 +12,7 @@ import { RobotModule } from './application/robot/robot.module';
 import { RobotTypeModule } from './application/robot-type/robot-type.module';
 import { BankModule } from './application/bank/bank.module';
 import { TaskModule } from './application/task/task.module';
+import { CredentialModule } from './application/credentials/credential.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -41,6 +42,7 @@ async function bootstrap() {
       ClientModule,
       UserModule,
       LicenseModule,
+      CredentialModule,
       RobotModule,
       RobotTypeModule,
       BankModule,
